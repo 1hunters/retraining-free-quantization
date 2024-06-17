@@ -1,0 +1,77 @@
+# Experiment name
+name: mobilenetv2
+
+# Name of output directory. Checkpoints and logs will be saved at `pwd`/output_dir
+output_dir: eval
+training_device: gpu
+
+num_random_path: 3
+split_aw_cands: true 
+target_bits: [6, 5, 4, 3, 2]
+post_training_batchnorm_calibration: true
+information_distortion_mitigation: true
+enable_dynamic_bit_training: true
+kd: false
+
+# Dataset loader
+dataloader:
+  dataset: imagenet
+  num_classes: 1000
+  path: /path/to/imagenet
+  batch_size: 128
+  workers: 16
+  deterministic: true
+
+resume:
+  path: 
+  lean: false
+
+log:
+  num_best_scores: 3
+  print_freq: 20
+
+#============================ Model ============================================
+
+arch: mobilenetv2
+pre_trained: true
+
+#============================ Quantization =====================================
+
+# (default for all layers)
+quan:
+  act: 
+    mode: lsq
+    bit: 2
+    per_channel: false
+    symmetric: false
+    all_positive: true
+
+  weight: 
+    mode: lsq
+    bit: 2
+    per_channel: false
+    symmetric: false
+    all_positive: false
+  
+  excepts:
+    # Specify quantized bit width for some layers, like this:
+    features.0.0:
+      act:
+        bit: 
+        all_positive: false
+      weight:
+        bit:
+    features.0.1:
+      act:
+        bit:
+      weight:
+        bit:
+    classifier.1:
+      act:
+        bit:
+      weight:
+        bit:
+
+#============================ Training / Evaluation ============================
+
+eval: true

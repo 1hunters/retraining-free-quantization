@@ -1,0 +1,77 @@
+# Experiment name
+name: mobilenetv2_5.5bitops
+
+# Name of output directory. Checkpoints and logs will be saved at `pwd`/output_dir
+output_dir: search
+training_device: gpu
+
+target_bits: [6, 5, 4, 3, 2]
+
+# Dataset loader
+dataloader:
+  dataset: imagenet
+  num_classes: 1000
+  path: /path/to/imagenet
+  batch_size: 512
+  workers: 16
+  deterministic: true
+
+resume:
+  path: 
+  lean: false
+
+log:
+  num_best_scores: 3
+  print_freq: 20
+
+#============================ Model ============================================
+
+arch: mobilenetv2
+pre_trained: true
+
+#============================ Quantization =====================================
+
+# (default for all layers)
+quan:
+  act: 
+    mode: lsq
+    bit: 2
+    per_channel: false
+    symmetric: false
+    all_positive: true
+
+  weight: 
+    mode: lsq
+    bit: 2
+    per_channel: false
+    symmetric: false
+    all_positive: false
+  
+  excepts:
+    # Specify quantized bit width for some layers, like this:
+    features.0.0:
+      act:
+        bit: 
+        all_positive: false
+      weight:
+        bit:
+    features.0.1:
+      act:
+        bit:
+      weight:
+        bit:
+    classifier.1:
+      act:
+        bit:
+      weight:
+        bit:
+
+#============================ Training / Evaluation ============================
+
+eval: false
+search: true
+
+# 4-bit level BitOPs 
+bops_limits: 5.58 
+min_bops_limits: 5.58
+start_bit_width: 5

@@ -1,0 +1,77 @@
+# Experiment name
+name: resnet18
+
+# Name of output directory. Checkpoints and logs will be saved at `pwd`/output_dir
+output_dir: training
+training_device: gpu
+
+num_random_path: 3
+target_bits: [6, 5, 4, 3, 2]
+post_training_batchnorm_calibration: true
+information_distortion_mitigation: true
+enable_dynamic_bit_training: true
+kd: false
+
+# Dataset loader
+dataloader:
+  dataset: imagenet
+  num_classes: 1000
+  path: /data/imagenet
+  batch_size: 128
+  workers: 8
+  deterministic: true
+
+resume:
+  path: 
+  lean: false
+
+log:
+  num_best_scores: 3
+  print_freq: 20
+
+#============================ Model ============================================
+
+arch: resnet18
+pre_trained: true
+
+#============================ Quantization =====================================
+
+# (default for all layers)
+quan:
+  act: 
+    mode: lsq
+    bit: 2
+    per_channel: false
+    symmetric: false
+    all_positive: true
+
+  weight: 
+    mode: lsq
+    bit: 2
+    per_channel: false
+    symmetric: false
+    all_positive: false
+  
+  excepts:
+    excepts_bits_width: 8
+    # Specify quantized bit width for some layers, like this:
+    conv1:
+      act:
+        bit: 
+        all_positive: false
+      weight:
+        bit:
+    bn1:
+      act:
+        bit:
+      weight:
+        bit:
+    fc:
+      act:
+        bit:
+      weight:
+        bit:
+
+#============================ Training / Evaluation ============================
+
+eval: true
